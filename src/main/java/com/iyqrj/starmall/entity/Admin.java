@@ -1,9 +1,12 @@
 package com.iyqrj.starmall.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -13,12 +16,12 @@ import java.io.Serializable;
  * @author lrj
  * @since 2020-06-15
  */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
 public class Admin implements Serializable {
 
     private static final long serialVersionUID=1L;
-
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
 
     private String username;
 
@@ -28,77 +31,11 @@ public class Admin implements Serializable {
 
     private String nickname;
 
-    private Date create_time;
+    @TableField(fill = FieldFill.INSERT)
+    private Date gmtCreate;
 
-    private Date update_time;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date gmtModified;
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public Date getCreate_time() {
-        return create_time;
-    }
-
-    public void setCreate_time(Date create_time) {
-        this.create_time = create_time;
-    }
-
-    public Date getUpdate_time() {
-        return update_time;
-    }
-
-    public void setUpdate_time(Date update_time) {
-        this.update_time = update_time;
-    }
-
-    @Override
-    public String toString() {
-        return "Admin{" +
-        "id=" + id +
-        ", username=" + username +
-        ", password=" + password +
-        ", email=" + email +
-        ", nickname=" + nickname +
-        ", create_time=" + create_time +
-        ", update_time=" + update_time +
-        "}";
-    }
 }

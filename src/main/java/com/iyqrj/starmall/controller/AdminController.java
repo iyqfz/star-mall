@@ -3,7 +3,7 @@ package com.iyqrj.starmall.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
  * @author lrj
  * @since 2020-06-15
  */
-@Controller
+@RestController
 @RequestMapping("/admin")
 public class AdminController {
 

@@ -1,6 +1,6 @@
 package com.iyqrj.starmall.mapper;
 
-import com.iyqrj.starmall.entity.Receiving_address;
+import com.iyqrj.starmall.entity.PayInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author lrj
  * @since 2020-06-15
  */
-public interface Receiving_addressMapper extends BaseMapper<Receiving_address> {
+public interface PayInfoMapper extends BaseMapper<PayInfo> {
 
 }

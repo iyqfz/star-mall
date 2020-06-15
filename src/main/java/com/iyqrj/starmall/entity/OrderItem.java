@@ -1,5 +1,6 @@
 package com.iyqrj.starmall.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -10,7 +11,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 用户表
+ * 
  * </p>
  *
  * @author lrj
@@ -19,19 +20,19 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class User implements Serializable {
+public class OrderItem implements Serializable {
 
     private static final long serialVersionUID=1L;
 
-    private String username;
+    private Long orderId;
 
-    private String password;
+    private Long productId;
 
-    private String nickname;
+    private BigDecimal currentPrice;
 
-    private Integer phone;
+    private Integer quantity;
 
-    private String email;
+    private BigDecimal totalPrice;
 
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;

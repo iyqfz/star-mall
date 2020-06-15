@@ -1,10 +1,13 @@
 package com.iyqrj.starmall.entity;
 
 import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -14,186 +17,48 @@ import java.io.Serializable;
  * @author lrj
  * @since 2020-06-15
  */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
 public class Order implements Serializable {
 
     private static final long serialVersionUID=1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
-
-    private Long user_id;
+    private Long userId;
 
     private BigDecimal payment;
 
     /**
      * 支付方式：1 在线支付 0 货到付款
      */
-    private Integer pay_type;
+    private Integer payType;
 
-    private String receiving_name;
+    private String receivingName;
 
-    private Integer reveiving_phone;
+    private Integer reveivingPhone;
 
-    private Integer receiving_zip_code;
+    private Integer receivingZipCode;
 
-    private String receiving_address;
+    private String receivingAddress;
 
     /**
      * 订单状态：0 待支付、1 已支付、2 已发货、3 确认收货、4 已完成、10 已取消
      */
     private Integer status;
 
-    private Date pay_time;
+    private Date payTime;
 
-    private Date close_time;
+    private Date closeTime;
 
-    private Date send_time;
+    private Date sendTime;
 
-    private Date update_time;
+    private Date endTime;
 
-    private Date create_time;
+    @TableField(fill = FieldFill.INSERT)
+    private Date gmtCreate;
 
-    private Date end_time;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date gmtModified;
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
-    }
-
-    public BigDecimal getPayment() {
-        return payment;
-    }
-
-    public void setPayment(BigDecimal payment) {
-        this.payment = payment;
-    }
-
-    public Integer getPay_type() {
-        return pay_type;
-    }
-
-    public void setPay_type(Integer pay_type) {
-        this.pay_type = pay_type;
-    }
-
-    public String getReceiving_name() {
-        return receiving_name;
-    }
-
-    public void setReceiving_name(String receiving_name) {
-        this.receiving_name = receiving_name;
-    }
-
-    public Integer getReveiving_phone() {
-        return reveiving_phone;
-    }
-
-    public void setReveiving_phone(Integer reveiving_phone) {
-        this.reveiving_phone = reveiving_phone;
-    }
-
-    public Integer getReceiving_zip_code() {
-        return receiving_zip_code;
-    }
-
-    public void setReceiving_zip_code(Integer receiving_zip_code) {
-        this.receiving_zip_code = receiving_zip_code;
-    }
-
-    public String getReceiving_address() {
-        return receiving_address;
-    }
-
-    public void setReceiving_address(String receiving_address) {
-        this.receiving_address = receiving_address;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Date getPay_time() {
-        return pay_time;
-    }
-
-    public void setPay_time(Date pay_time) {
-        this.pay_time = pay_time;
-    }
-
-    public Date getClose_time() {
-        return close_time;
-    }
-
-    public void setClose_time(Date close_time) {
-        this.close_time = close_time;
-    }
-
-    public Date getSend_time() {
-        return send_time;
-    }
-
-    public void setSend_time(Date send_time) {
-        this.send_time = send_time;
-    }
-
-    public Date getUpdate_time() {
-        return update_time;
-    }
-
-    public void setUpdate_time(Date update_time) {
-        this.update_time = update_time;
-    }
-
-    public Date getCreate_time() {
-        return create_time;
-    }
-
-    public void setCreate_time(Date create_time) {
-        this.create_time = create_time;
-    }
-
-    public Date getEnd_time() {
-        return end_time;
-    }
-
-    public void setEnd_time(Date end_time) {
-        this.end_time = end_time;
-    }
-
-    @Override
-    public String toString() {
-        return "Order{" +
-        "id=" + id +
-        ", user_id=" + user_id +
-        ", payment=" + payment +
-        ", pay_type=" + pay_type +
-        ", receiving_name=" + receiving_name +
-        ", reveiving_phone=" + reveiving_phone +
-        ", receiving_zip_code=" + receiving_zip_code +
-        ", receiving_address=" + receiving_address +
-        ", status=" + status +
-        ", pay_time=" + pay_time +
-        ", close_time=" + close_time +
-        ", send_time=" + send_time +
-        ", update_time=" + update_time +
-        ", create_time=" + create_time +
-        ", end_time=" + end_time +
-        "}";
-    }
 }

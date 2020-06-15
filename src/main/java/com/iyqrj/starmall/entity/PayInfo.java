@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 用户表
+ * 
  * </p>
  *
  * @author lrj
@@ -19,19 +19,16 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class User implements Serializable {
+public class PayInfo implements Serializable {
 
     private static final long serialVersionUID=1L;
 
-    private String username;
+    /**
+     * 支付平台：1 支付宝、2 微信、3 银联
+     */
+    private Integer payPlatform;
 
-    private String password;
-
-    private String nickname;
-
-    private Integer phone;
-
-    private String email;
+    private String platformCode;
 
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;

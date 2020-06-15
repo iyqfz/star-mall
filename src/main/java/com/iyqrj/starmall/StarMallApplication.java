@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.iyqrj.mall.mapper")
+@MapperScan("com.iyqrj.starmall.mapper")
 public class StarMallApplication {
 
     public static void main(String[] args) {

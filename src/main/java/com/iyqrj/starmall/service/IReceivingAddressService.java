@@ -1,6 +1,6 @@
 package com.iyqrj.starmall.service;
 
-import com.iyqrj.starmall.entity.Order_item;
+import com.iyqrj.starmall.entity.ReceivingAddress;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lrj
  * @since 2020-06-15
  */
-public interface IOrder_itemService extends IService<Order_item> {
+public interface IReceivingAddressService extends IService<ReceivingAddress> {
 
 }

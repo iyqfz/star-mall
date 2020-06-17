@@ -1,4 +1,4 @@
-package com.iyqrj.starmall.controller;
+package com.iyqrj.starmall.controller.foreground;
 
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
  * </p>
  *
  * @author lrj
- * @since 2020-06-15
+ * @since 2020-06-17
  */
 @RestController
-@RequestMapping("/receiving-address")
-public class ReceivingAddressController {
+@RequestMapping("/cart")
+public class CartController {
 
 }
 

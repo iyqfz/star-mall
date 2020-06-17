@@ -62,7 +62,7 @@ public class CodeGenerator {
             public DbColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
                 //将数据库中datetime转换成date
                 if ( fieldType.toLowerCase().contains( "datetime" ) ) {
-                    return DbColumnType.DATE;
+                    return DbColumnType.LOCAL_DATE_TIME;
                 }
                 return (DbColumnType) super.processTypeConvert(globalConfig, fieldType);
             }
@@ -139,7 +139,7 @@ public class CodeGenerator {
         // 公共父类
         //strategy.setSuperControllerClass("你自己的父类控制器,没有就不用设置!");
         // 写于父类中的公共字段
-        strategy.setSuperEntityColumns("id");
+//        strategy.setSuperEntityColumns("id");
         //strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");

@@ -1,7 +1,9 @@
 package com.iyqrj.starmall.entity;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
@@ -15,7 +17,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author lrj
- * @since 2020-06-15
+ * @since 2020-06-17
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -23,6 +25,9 @@ import lombok.experimental.Accessors;
 public class Product implements Serializable {
 
     private static final long serialVersionUID=1L;
+
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private String title;
 
@@ -39,10 +44,10 @@ public class Product implements Serializable {
     private String comment;
 
     @TableField(fill = FieldFill.INSERT)
-    private Date gmtCreate;
+    private LocalDateTime gmtCreate;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date gmtModified;
+    private LocalDateTime gmtModified;
 
 
 }

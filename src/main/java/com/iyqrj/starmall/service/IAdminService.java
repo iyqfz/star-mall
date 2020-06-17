@@ -1,5 +1,6 @@
 package com.iyqrj.starmall.service;
 
+import com.iyqrj.starmall.common.Result;
 import com.iyqrj.starmall.entity.Admin;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -9,8 +10,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author lrj
- * @since 2020-06-15
+ * @since 2020-06-17
  */
 public interface IAdminService extends IService<Admin> {
 
+    Result add(Admin admin);
+
+    Result list(Integer pageIndex, Integer pageSize, String username);
+
+    Result login(String username, String password);
 }

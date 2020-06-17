@@ -1,4 +1,4 @@
-package com.iyqrj.starmall.controller;
+package com.iyqrj.starmall.controller.foreground;
 
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- * 管理员表 前端控制器
+ *  前端控制器
  * </p>
  *
  * @author lrj
- * @since 2020-06-15
+ * @since 2020-06-17
  */
 @RestController
-@RequestMapping("/admin")
-public class AdminController {
+@RequestMapping("/pay-info")
+public class PayInfoController {
 
 }
 

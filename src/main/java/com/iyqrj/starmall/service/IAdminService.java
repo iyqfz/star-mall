@@ -16,7 +16,7 @@ public interface IAdminService extends IService<Admin> {
 
     Result add(Admin admin);
 
-    Result list(Integer pageIndex, Integer pageSize, String username);
+    Result list(Integer pageIndex, Integer pageSize, String searchUsername, String searchEmail);
 
     Result login(String username, String password);
 }

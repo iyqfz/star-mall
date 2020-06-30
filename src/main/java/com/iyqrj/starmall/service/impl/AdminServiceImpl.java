@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import java.util.List;
-
 /**
  * <p>
  * 管理员表 服务实现类
@@ -65,9 +63,11 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     }
 
     @Override
-    public Result list(Integer pageIndex, Integer pageSize, String username) {
+    public Result list(Integer pageIndex, Integer pageSize, String searchUsername, String searchEmail) {
         QueryWrapper<Admin> adminQueryWrapper = new QueryWrapper<>();
-        adminQueryWrapper.like(StringUtils.isNotEmpty(username), "username", username);
+        adminQueryWrapper.select(Admin.class, info -> !info.getColumn().equals("password"))
+                        .like(StringUtils.isNotEmpty(searchUsername), "username", searchUsername)
+                        .like(StringUtils.isNotEmpty(searchEmail), "email", searchEmail);
 
         Page<Admin> adminPage = new Page<>(pageIndex, pageSize);
         IPage<Admin> adminIPage = adminMapper.selectPage(adminPage, adminQueryWrapper);
@@ -77,14 +77,14 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     @Override
     public Result login(String username, String password) {
         QueryWrapper<Admin> adminQueryWrapper = new QueryWrapper<>();
-        adminQueryWrapper.and(wrapper -> wrapper.eq("username", username).or().eq("email", username));
+        adminQueryWrapper.select(Admin.class, info -> !info.getColumn().equals("password"))
+                .and(wrapper -> wrapper.eq("username", username).or().eq("email", username));
         String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
         adminQueryWrapper.eq("password", md5Password);
         Admin admin = adminMapper.selectOne(adminQueryWrapper);
         if(null == admin){
             return Result.error("用户名或密码错误");
         } else {
-            admin.setPassword(null);
             return Result.ok("登录成功", admin);
         }
     }

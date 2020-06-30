@@ -29,7 +29,7 @@ public class AdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "add")
+    @PostMapping(value = "add")
     public Result add(HttpSession session, @Validated Admin admin){
         Admin loginAdmin = (Admin)session.getAttribute("loginAdmin");
         if(null == loginAdmin){
@@ -40,8 +40,8 @@ public class AdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "delete")
-    public Result delete(HttpSession session, @RequestParam(value = "id", required = true) Integer id){
+    @DeleteMapping(value = "remove")
+    public Result delete(HttpSession session, @RequestParam(value = "id") Integer id){
         Admin loginAdmin = (Admin)session.getAttribute("loginAdmin");
         if(null == loginAdmin){
             return Result.error("未登录，请登录管理员");
@@ -51,7 +51,7 @@ public class AdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "update")
+    @PutMapping(value = "update")
     public Result update(HttpSession session, Admin admin){
         Admin loginAdmin = (Admin)session.getAttribute("loginAdmin");
         if(null == loginAdmin){
@@ -64,14 +64,15 @@ public class AdminController {
     @ResponseBody
     @GetMapping(value = "list")
     public Result list(HttpSession session,
-                       @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+                       @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
                        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-                       @RequestParam(value = "username", required = false) String username){
+                       @RequestParam(value = "searchUsername", required = false) String searchUsername,
+                       @RequestParam(value = "searchEmail", required = false) String searchEmail){
         Admin loginAdmin = (Admin)session.getAttribute("loginAdmin");
         if(null == loginAdmin){
             return Result.error("未登录，请登录管理员");
         }
-        Result result = iAdminService.list(pageIndex, pageSize, username);
+        Result result = iAdminService.list(pageIndex, pageSize, searchUsername, searchEmail);
         return result;
     }
 

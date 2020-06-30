@@ -1,5 +1,6 @@
 package com.iyqrj.starmall.service;
 
+import com.iyqrj.starmall.common.Result;
 import com.iyqrj.starmall.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUserService extends IService<User> {
 
+    Result login(String username, String password);
 }

@@ -1,9 +1,12 @@
 package com.iyqrj.starmall.controller.foreground;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.iyqrj.starmall.common.Result;
+import com.iyqrj.starmall.service.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
+import javax.servlet.http.HttpSession;
 
 /**
  * <p>
@@ -17,5 +20,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class UserController {
 
+    private final IUserService iUserService;
+    @Autowired
+    public UserController(IUserService iUserService) {
+        this.iUserService = iUserService;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "login")
+    public Result login(HttpSession session,
+                        @RequestParam(value = "username") String username,
+                        @RequestParam(value = "password") String password){
+        Result result = iUserService.login(username, password);
+        if(result.getSuccess()) {
+            session.setAttribute("loginUser", result.getResult());
+        }
+        return result;
+    }
 }
 

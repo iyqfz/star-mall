@@ -49,10 +49,10 @@ import java.util.*;
  */
 @Service
 @Slf4j
-public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {
+public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements IOrderService {
 
     @Autowired
-    private OrderMapper orderMapper;
+    private OrdersMapper orderMapper;
     @Autowired
     private OrderItemMapper orderItemMapper;
     @Autowired
@@ -70,7 +70,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     public ServerResponse pay(Long orderNo, Integer userId, String path){
         Map<String, String> resultMap = Maps.newHashMap();
-        Order order = orderMapper.selectByUserIdAndOrderNo(userId,orderNo);
+        Orders order = orderMapper.selectByUserIdAndOrderNo(userId,orderNo);
         if(order == null) {
             return ServerResponse.createByErrorMessage("用户没有该订单");
         }
@@ -201,7 +201,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         Long orderNo = Long.parseLong(params.get("out_trade_no"));
         String tradeNo = params.get("trade_no");
         String tradeStatus = params.get("trade_status");
-        Order order = orderMapper.selectByOrderNo(orderNo);
+        Orders order = orderMapper.selectByOrderNo(orderNo);
         if(order == null) {
             return ServerResponse.createByErrorMessage("非本商城的订单，回调忽略");
         }
@@ -227,7 +227,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     public ServerResponse queryOrderpayStatus(Integer userId, Long orderNo) {
-        Order order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
+        Orders order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
         if(order == null) {
             return ServerResponse.createBySuccessMessage("用户没有该订单");
         }
@@ -251,7 +251,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         BigDecimal payment = this.getOrderTotalPrice(orderItemList);
 
         //生成订单
-        Order order = this.assembleOrder(userId,shippingId,payment);
+        Orders order = this.assembleOrder(userId,shippingId,payment);
         if(order == null) {
             return ServerResponse.createByErrorMessage("生成订单错误");
         }
@@ -276,7 +276,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return ServerResponse.createBySuccess(orderVo);
     }
 
-    private OrderVo assembleOrderVo(Order order, List<OrderItem> orderItemList) {
+    private OrderVo assembleOrderVo(Orders order, List<OrderItem> orderItemList) {
         OrderVo orderVo = new OrderVo();
         orderVo.setOrderNo(order.getOrderNo());
         orderVo.setPayment(order.getPayment());
@@ -356,8 +356,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
     }
 
-    private Order assembleOrder(Integer userId, Integer shippingId, BigDecimal payment) {
-        Order order = new Order();
+    private Orders assembleOrder(Integer userId, Integer shippingId, BigDecimal payment) {
+        Orders order = new Orders();
         long orderNo = this.generateOrderNo();
         order.setOrderNo(orderNo);
         order.setStatus(Const.OrderStatusEnum.NO_PAY.getCode());
@@ -420,14 +420,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     public ServerResponse<String> cancel(Integer userId, Long orderNo) {
-        Order order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
+        Orders order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
         if(order == null) {
             return ServerResponse.createByErrorMessage("该用户此订单不存在");
         }
         if(order.getStatus() != Const.OrderStatusEnum.NO_PAY.getCode()) {
             return ServerResponse.createByErrorMessage("已付款，无法取消订单");
         }
-        Order updateOrder = new Order();
+        Orders updateOrder = new Orders();
         updateOrder.setId(order.getId());
         updateOrder.setStatus(Const.OrderStatusEnum.CANCELED.getCode());
 
@@ -464,7 +464,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     public ServerResponse<OrderVo> getOrderDetail(Integer userId,Long orderNo){
-        Order order = orderMapper.selectByUserIdAndOrderNo(userId,orderNo);
+        Orders order = orderMapper.selectByUserIdAndOrderNo(userId,orderNo);
         if(order != null){
             List<OrderItem> orderItemList = orderItemMapper.getByOrderNoUserId(orderNo,userId);
             OrderVo orderVo = assembleOrderVo(order,orderItemList);
@@ -475,16 +475,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     public ServerResponse<PageInfo> getOrderList(Integer userId, int pageNum, int pageSize){
         PageHelper.startPage(pageNum,pageSize);
-        List<Order> orderList = orderMapper.selectByUserId(userId);
+        List<Orders> orderList = orderMapper.selectByUserId(userId);
         List<OrderVo> orderVoList = assembleOrderVoList(orderList,userId);
         PageInfo pageResult = new PageInfo(orderList);
         pageResult.setList(orderVoList);
         return ServerResponse.createBySuccess(pageResult);
     }
 
-    private List<OrderVo> assembleOrderVoList(List<Order> orderList,Integer userId){
+    private List<OrderVo> assembleOrderVoList(List<Orders> orderList, Integer userId){
         List<OrderVo> orderVoList = Lists.newArrayList();
-        for(Order order : orderList){
+        for(Orders order : orderList){
             List<OrderItem>  orderItemList = Lists.newArrayList();
             if(userId == null){
                 // 管理员查询的时候 不需要传userId
@@ -502,7 +502,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     public ServerResponse<PageInfo> manageList(int pageNum,int pageSize){
         PageHelper.startPage(pageNum,pageSize);
-        List<Order> orderList = orderMapper.selectAllOrder();
+        List<Orders> orderList = orderMapper.selectAllOrder();
         List<OrderVo> orderVoList = this.assembleOrderVoList(orderList,null);
         PageInfo pageResult = new PageInfo(orderList);
         pageResult.setList(orderVoList);
@@ -510,7 +510,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     public ServerResponse<OrderVo> manageDetail(Long orderNo){
-        Order order = orderMapper.selectByOrderNo(orderNo);
+        Orders order = orderMapper.selectByOrderNo(orderNo);
         if(order != null){
             List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
             OrderVo orderVo = assembleOrderVo(order,orderItemList);
@@ -521,7 +521,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     public ServerResponse<PageInfo> manageSearch(Long orderNo,int pageNum,int pageSize){
         PageHelper.startPage(pageNum,pageSize);
-        Order order = orderMapper.selectByOrderNo(orderNo);
+        Orders order = orderMapper.selectByOrderNo(orderNo);
         if(order != null){
             List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
             OrderVo orderVo = assembleOrderVo(order,orderItemList);
@@ -535,7 +535,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 
     public ServerResponse<String> manageSendGoods(Long orderNo){
-        Order order= orderMapper.selectByOrderNo(orderNo);
+        Orders order= orderMapper.selectByOrderNo(orderNo);
         if(order != null){
             if(order.getStatus() == Const.OrderStatusEnum.PAID.getCode()){
                 order.setStatus(Const.OrderStatusEnum.SHIPPED.getCode());

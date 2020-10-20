@@ -8,7 +8,7 @@ import com.iyqrj.starmall.common.ServerResponse;
 import com.iyqrj.starmall.entity.CustomerService;
 import com.iyqrj.starmall.entity.User;
 import com.iyqrj.starmall.mapper.CustomerServiceMapper;
-import com.iyqrj.starmall.mapper.OrderMapper;
+import com.iyqrj.starmall.mapper.OrdersMapper;
 import com.iyqrj.starmall.mapper.UserMapper;
 import com.iyqrj.starmall.service.ICustomerServiceService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,8 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -36,7 +34,7 @@ public class CustomerServiceServiceImpl extends ServiceImpl<CustomerServiceMappe
     @Autowired
     private CustomerServiceMapper customerServiceMapper;
     @Autowired
-    private OrderMapper orderMapper;
+    private OrdersMapper orderMapper;
     @Autowired
     private UserMapper userMapper;
 

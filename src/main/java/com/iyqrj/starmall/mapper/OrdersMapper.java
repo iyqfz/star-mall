@@ -1,6 +1,6 @@
 package com.iyqrj.starmall.mapper;
 
-import com.iyqrj.starmall.entity.Order;
+import com.iyqrj.starmall.entity.Orders;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,26 +14,26 @@ import java.util.List;
  * @author lrj
  * @since 2020-10-19
  */
-public interface OrderMapper extends BaseMapper<Order> {
+public interface OrdersMapper extends BaseMapper<Orders> {
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Order record);
+    int insert(Orders record);
 
-    int insertSelective(Order record);
+    int insertSelective(Orders record);
 
-    Order selectByPrimaryKey(Integer id);
+    Orders selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(Order record);
+    int updateByPrimaryKeySelective(Orders record);
 
-    int updateByPrimaryKey(Order record);
+    int updateByPrimaryKey(Orders record);
 
-    Order selectByUserIdAndOrderNo(@Param("userId") Integer userId, @Param("orderNo") Long orderNo);
+    Orders selectByUserIdAndOrderNo(@Param("userId") Integer userId, @Param("orderNo") Long orderNo);
 
-    Order selectByOrderNo(Long orderNo);
+    Orders selectByOrderNo(Long orderNo);
 
-    List<Order> selectByUserId(Integer userId);
+    List<Orders> selectByUserId(Integer userId);
 
-    List<Order> selectAllOrder();
+    List<Orders> selectAllOrder();
 
     void updateStatus(@Param("userId") Integer userId, @Param("orderNo") Long orderNo, @Param("status") int status);
 

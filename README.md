@@ -1,7 +1,11 @@
 # star-mall
-Linux:
-  1. 安装git，并生成公私钥
-  2. 添加公钥到github
-  3. pull项目
-
-将mapper文件放在java目录中的办法是配置pom.xml文件
+#1 技术栈
+    1. java8
+    2. springboot 2.3.0
+    3. spring
+    4. spring mvc
+    5. mybatis
+    
+    
+#1 在Linux中运行项目
+    1. 在本地生成jar包发送给linux运行

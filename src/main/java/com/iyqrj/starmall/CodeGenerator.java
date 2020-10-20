@@ -144,8 +144,8 @@ public class CodeGenerator {
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
         // 自动填充配置
-        TableFill gmtCreate = new TableFill("gmt_create", FieldFill.INSERT);
-        TableFill gmtModified = new TableFill("gmt_modified",
+        TableFill gmtCreate = new TableFill("create_time", FieldFill.INSERT);
+        TableFill gmtModified = new TableFill("update_time",
                 FieldFill.INSERT_UPDATE);
         ArrayList<TableFill> tableFills = new ArrayList<>();
         tableFills.add(gmtCreate);

@@ -7,17 +7,19 @@ import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 订单总表
+ * 
  * </p>
  *
  * @author lrj
- * @since 2020-06-17
+ * @since 2020-10-19
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -27,43 +29,35 @@ public class Order implements Serializable {
     private static final long serialVersionUID=1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    private Long userId;
+    private Long orderNo;
+
+    private Integer userId;
+
+    private Integer shippingId;
 
     private BigDecimal payment;
 
-    /**
-     * 支付方式：1 在线支付 0 货到付款
-     */
-    private Integer payType;
+    private Integer paymentType;
 
-    private String receivingName;
+    private Integer postage;
 
-    private Integer reveivingPhone;
-
-    private Integer receivingZipCode;
-
-    private String receivingAddress;
-
-    /**
-     * 订单状态：0 待支付、1 已支付、2 已发货、3 确认收货、4 已完成、10 已取消
-     */
     private Integer status;
 
-    private LocalDateTime payTime;
+    private Date paymentTime;
 
-    private LocalDateTime closeTime;
+    private Date sendTime;
 
-    private LocalDateTime sendTime;
+    private Date endTime;
 
-    private LocalDateTime endTime;
+    private Date closeTime;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime gmtCreate;
+    private Date createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime gmtModified;
+    private Date updateTime;
 
 
 }

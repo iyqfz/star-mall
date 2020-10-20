@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -16,7 +18,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author lrj
- * @since 2020-06-17
+ * @since 2020-10-19
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -26,24 +28,21 @@ public class Cart implements Serializable {
     private static final long serialVersionUID=1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    private Long productId;
+    private Integer userId;
 
-    private Long userId;
+    private Integer productId;
 
     private Integer quantity;
 
-    /**
-     * 是否选中：1 是 0 否
-     */
     private Integer checked;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime gmtCreate;
+    private Date createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime gmtModified;
+    private Date updateTime;
 
 
 }

@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 public class TableFillHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
-        this.strictInsertFill(metaObject, "gmtCreate", LocalDateTime.class, LocalDateTime.now());
-        this.strictInsertFill(metaObject, "gmtModified", LocalDateTime.class, LocalDateTime.now());
+        this.strictInsertFill(metaObject, "create_time", LocalDateTime.class, LocalDateTime.now());
+        this.strictInsertFill(metaObject, "update_time", LocalDateTime.class, LocalDateTime.now());
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.strictUpdateFill(metaObject, "gmtModified", LocalDateTime.class, LocalDateTime.now());
+        this.strictUpdateFill(metaObject, "update_time", LocalDateTime.class, LocalDateTime.now());
     }
 }

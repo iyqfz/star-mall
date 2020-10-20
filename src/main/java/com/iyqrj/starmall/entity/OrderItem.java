@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -17,7 +19,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author lrj
- * @since 2020-06-17
+ * @since 2020-10-19
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -27,23 +29,29 @@ public class OrderItem implements Serializable {
     private static final long serialVersionUID=1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    private Long orderId;
+    private Integer userId;
 
-    private Long productId;
+    private Long orderNo;
 
-    private BigDecimal currentPrice;
+    private Integer productId;
+
+    private String productName;
+
+    private String productImage;
+
+    private BigDecimal currentUnitPrice;
 
     private Integer quantity;
 
     private BigDecimal totalPrice;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime gmtCreate;
+    private Date createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime gmtModified;
+    private Date updateTime;
 
 
 }

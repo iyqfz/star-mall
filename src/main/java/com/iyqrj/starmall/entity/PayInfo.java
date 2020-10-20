@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -16,7 +18,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author lrj
- * @since 2020-06-17
+ * @since 2020-10-19
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -26,20 +28,23 @@ public class PayInfo implements Serializable {
     private static final long serialVersionUID=1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    /**
-     * 支付平台：1 支付宝、2 微信、3 银联
-     */
+    private Integer userId;
+
+    private Long orderNo;
+
     private Integer payPlatform;
 
-    private String platformCode;
+    private String platformNumber;
+
+    private String platformStatus;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime gmtCreate;
+    private Date createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime gmtModified;
+    private Date updateTime;
 
 
 }

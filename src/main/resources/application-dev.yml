@@ -1,5 +1,5 @@
 server:
-  port: 1122
+  port: 1133
 
 spring:
   datasource:
@@ -9,6 +9,10 @@ spring:
     password: 123456
 
 mybatis-plus:
-  mapper-locations: classpath:com/iyqrj/starmall/mapper/xml/*.xml
+#  mapper-locations: classpath:com/iyqrj/starmall/mapper/xml/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+password.salt:
+  geelysdafaqj23ou89ZXcj@#$@#$#@KJdjklj;D../dSF.,

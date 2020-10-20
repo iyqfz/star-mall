@@ -1,7 +1,10 @@
 package com.iyqrj.starmall.service;
 
+import com.iyqrj.starmall.common.ServerResponse;
 import com.iyqrj.starmall.entity.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -9,8 +12,16 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author lrj
- * @since 2020-06-17
+ * @since 2020-10-19
  */
 public interface ICategoryService extends IService<Category> {
+
+    ServerResponse addCategory(String categoryName, Integer parentId);
+
+    ServerResponse updateCategoryName(Integer categoryId, String categoryName);
+
+    ServerResponse<List<Category>> getChildrenParallelCategory(Integer categoryId);
+
+    ServerResponse<List<Integer>> selectCategoryAndChildrenById(Integer categoryId);
 
 }

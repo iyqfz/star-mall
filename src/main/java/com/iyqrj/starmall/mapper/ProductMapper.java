@@ -2,15 +2,34 @@ package com.iyqrj.starmall.mapper;
 
 import com.iyqrj.starmall.entity.Product;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
- * 商品表 Mapper 接口
+ *  Mapper 接口
  * </p>
  *
  * @author lrj
- * @since 2020-06-17
+ * @since 2020-10-19
  */
 public interface ProductMapper extends BaseMapper<Product> {
+    int deleteByPrimaryKey(Integer id);
 
+    int insert(Product record);
+
+    int insertSelective(Product record);
+
+    Product selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(Product record);
+
+    int updateByPrimaryKey(Product record);
+
+    List<Product> selectList();
+
+    List<Product> selectByNameAndProductId(@Param("productName") String productName, @Param("productId") Integer productId);
+
+    List<Product> selectByNameAndCategoryIds(@Param("productName") String productName, @Param("categoryIdList") List<Integer> categoryIdList);
 }

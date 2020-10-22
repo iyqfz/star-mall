@@ -223,14 +223,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private UserPointVo assembleUserPointVo(User user, Long totalPoint){
         UserPointVo userPointVo = new UserPointVo();
         userPointVo.setAnswer(user.getAnswer());
-        userPointVo.setCreateTime(user.getCreateTime());
+//        userPointVo.setCreateTime(user.getCreateTime());todo
         userPointVo.setEmail(user.getEmail());
         userPointVo.setId(user.getId());
         userPointVo.setPassword(user.getPassword());
         userPointVo.setPhone(user.getPhone());
         userPointVo.setQuestion(user.getQuestion());
         userPointVo.setRole(user.getRole());
-        userPointVo.setUpdateTime(user.getUpdateTime());
+//        userPointVo.setUpdateTime(user.getUpdateTime());todo
         userPointVo.setUsername(user.getUsername());
         userPointVo.setTotalPoint(totalPoint);
 
@@ -340,7 +340,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             userVo.setUsername(user.getUsername());
             userVo.setRoleName(user.getRole() == Const.Role.ROLE_ADMIN ? "管理员" : "普通用户");
             userVo.setPhone(user.getPhone());
-            userVo.setCreateTime(DateTimeUtil.dateToStr(user.getCreateTime()));
+//            userVo.setCreateTime(DateTimeUtil.dateToStr(user.getCreateTime()));todo
 
             userVoList.add(userVo);
         }

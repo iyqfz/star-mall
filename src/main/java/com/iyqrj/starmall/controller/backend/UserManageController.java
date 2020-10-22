@@ -150,7 +150,7 @@ public class UserManageController {
      * @param user
      * @return
      */
-    @RequestMapping(value = "add")
+    @RequestMapping(value = "add", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> add(HttpSession session, User user){
         User currentUser = (User)session.getAttribute(Const.CURRENT_USER);

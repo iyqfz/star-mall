@@ -124,7 +124,7 @@ public class CustomerServiceServiceImpl extends ServiceImpl<CustomerServiceMappe
             csUserVo.setMainContent(cs.getMainContent());
             csUserVo.setOrderNo(cs.getOrderNo().toString());
             csUserVo.setReply(cs.getReply());
-            csUserVo.setCreateTime(DateTimeUtil.dateToStr(cs.getCreateTime()));
+//            csUserVo.setCreateTime(DateTimeUtil.dateToStr(cs.getCreateTime()));todo
 //            csUserVo.setCreateTime(DateTimeUtil.dateToStr(Date.from(cs.getCreateTime().atZone(ZoneId.systemDefault()).toInstant())));
             csUserVo.setStatus(cs.getStatus());
             csUserVoList.add(csUserVo);

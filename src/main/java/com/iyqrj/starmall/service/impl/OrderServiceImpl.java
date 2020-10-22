@@ -209,7 +209,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
             return ServerResponse.createBySuccess("支付宝重复调用");
         }
         if(Const.AlipayCallback.TRADE_STATUS_TRADE_SUCCESS.equals(tradeStatus)) {
-            order.setPaymentTime(DateTimeUtil.strToDate(params.get("gmt_payment")));
+//            order.setPaymentTime(DateTimeUtil.strToDate(params.get("gmt_payment")));todo
             order.setStatus(Const.OrderStatusEnum.PAID.getCode());
             orderMapper.updateByPrimaryKeySelective(order);
         }
@@ -294,11 +294,11 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
             orderVo.setShippingVo(assembleShippingVo(shipping));
         }
 
-        orderVo.setPaymentTime(DateTimeUtil.dateToStr(order.getPaymentTime()));
-        orderVo.setSendTime(DateTimeUtil.dateToStr(order.getSendTime()));
-        orderVo.setEndTime(DateTimeUtil.dateToStr(order.getEndTime()));
-        orderVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));
-        orderVo.setCloseTime(DateTimeUtil.dateToStr(order.getCloseTime()));
+//        orderVo.setPaymentTime(DateTimeUtil.dateToStr(order.getPaymentTime()));todo
+//        orderVo.setSendTime(DateTimeUtil.dateToStr(order.getSendTime()));todo
+//        orderVo.setEndTime(DateTimeUtil.dateToStr(order.getEndTime()));todo
+//        orderVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));todo
+//        orderVo.setCloseTime(DateTimeUtil.dateToStr(order.getCloseTime()));todo
 
         orderVo.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix"));
 
@@ -322,7 +322,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         orderItemVo.setQuantity(orderItem.getQuantity());
         orderItemVo.setTotalPrice(orderItem.getTotalPrice());
 
-        orderItemVo.setCreateTime(DateTimeUtil.dateToStr(orderItem.getCreateTime()));
+//        orderItemVo.setCreateTime(DateTimeUtil.dateToStr(orderItem.getCreateTime()));todo
         return orderItemVo;
     }
 
@@ -539,7 +539,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         if(order != null){
             if(order.getStatus() == Const.OrderStatusEnum.PAID.getCode()){
                 order.setStatus(Const.OrderStatusEnum.SHIPPED.getCode());
-                order.setSendTime(new Date());
+//                order.setSendTime(new Date());todo
                 orderMapper.updateByPrimaryKeySelective(order);
                 return ServerResponse.createBySuccess("发货成功");
             }
@@ -555,11 +555,11 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         Level level = levelMapper.getByUserId(userId);
 
         point.setTotalPoint(payment + point.getTotalPoint());
-        point.setUpdateTime(new Date());
+//        point.setUpdateTime(new Date());todo
         pointMapper.updateByPrimaryKeySelective(point);
 
         level.setExperience(payment + level.getExperience());
-        level.setUpdateTime(new Date());
+//        level.setUpdateTime(new Date());todo
         levelMapper.updateByPrimaryKeySelective(level);
 
         return ServerResponse.createBySuccess("确认收货成功");

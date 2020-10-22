@@ -19,7 +19,7 @@ import java.util.Date;
  * </p>
  *
  * @author lrj
- * @since 2020-10-19
+ * @since 2020-10-22
  */
 @Data
 @NoArgsConstructor
@@ -41,10 +41,10 @@ public class Category implements Serializable {
 
     private String sortOrder;
 
-    @TableField(fill = FieldFill.INSERT)
+//    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+//    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
 

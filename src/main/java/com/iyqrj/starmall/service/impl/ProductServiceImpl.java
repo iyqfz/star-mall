@@ -121,9 +121,9 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         }
 
         //createTime
-        productDetailVo.setCreateTime(DateTimeUtil.dateToStr(product.getCreateTime()));
+//        productDetailVo.setCreateTime(DateTimeUtil.dateToStr(product.getCreateTime()));todo
         //updateTime
-        productDetailVo.setUpdateTime(DateTimeUtil.dateToStr(product.getUpdateTime()));
+//        productDetailVo.setUpdateTime(DateTimeUtil.dateToStr(product.getUpdateTime()));todo
         return productDetailVo;
     }
 

@@ -13,8 +13,8 @@
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
-id, parent_id, name, status, sort_order, create_time, update_time
-</sql>
+        id, parent_id, name, status, sort_order, create_time, update_time
+    </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
@@ -22,17 +22,17 @@ id, parent_id, name, status, sort_order, create_time, update_time
         where id = #{id,jdbcType=INTEGER}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-delete from category
-where id = #{id,jdbcType=INTEGER}
-</delete>
+        delete from category
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
     <insert id="insert" parameterType="com.iyqrj.starmall.entity.Category">
-insert into category (id, parent_id, name,
-  status, sort_order, create_time,
-  update_time)
-values (#{id,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
-  #{status,jdbcType=BIT}, #{sortOrder,jdbcType=INTEGER}, now(),
-  now())
-</insert>
+        insert into category (id, parent_id, name,
+        status, sort_order, create_time,
+        update_time)
+        values (#{id,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+        #{status,jdbcType=BIT}, #{sortOrder,jdbcType=INTEGER}, now(),
+        now())
+    </insert>
     <insert id="insertSelective" parameterType="com.iyqrj.starmall.entity.Category">
         insert into category
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -107,15 +107,15 @@ values (#{id,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{name,jdbcType=VA
         where id = #{id,jdbcType=INTEGER}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.iyqrj.starmall.entity.Category">
-update category
-set parent_id = #{parentId,jdbcType=INTEGER},
-  name = #{name,jdbcType=VARCHAR},
-  status = #{status,jdbcType=BIT},
-  sort_order = #{sortOrder,jdbcType=INTEGER},
-  create_time = #{createTime,jdbcType=TIMESTAMP},
-  update_time = now()
-where id = #{id,jdbcType=INTEGER}
-</update>
+        update category
+        set parent_id = #{parentId,jdbcType=INTEGER},
+        name = #{name,jdbcType=VARCHAR},
+        status = #{status,jdbcType=BIT},
+        sort_order = #{sortOrder,jdbcType=INTEGER},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        update_time = now()
+        where id = #{id,jdbcType=INTEGER}
+    </update>
     <select id="selectCategoryChildrenByParentId" resultMap="BaseResultMap" parameterType="int">
         SELECT
         <include refid="Base_Column_List"/>

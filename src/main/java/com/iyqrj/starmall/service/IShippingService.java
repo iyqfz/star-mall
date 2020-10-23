@@ -3,7 +3,6 @@ package com.iyqrj.starmall.service;
 import com.github.pagehelper.PageInfo;
 import com.iyqrj.starmall.common.ServerResponse;
 import com.iyqrj.starmall.entity.Shipping;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
@@ -13,7 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lrj
  * @since 2020-10-19
  */
-public interface IShippingService extends IService<Shipping> {
+public interface IShippingService {
 
     ServerResponse add(Integer userId, Shipping shipping);
 

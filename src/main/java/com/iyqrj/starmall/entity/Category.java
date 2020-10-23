@@ -1,14 +1,8 @@
 package com.iyqrj.starmall.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -21,11 +15,11 @@ import java.util.Date;
  * @author lrj
  * @since 2020-10-22
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@EqualsAndHashCode(of = "id")
 public class Category implements Serializable {
 
     private static final long serialVersionUID=1L;
@@ -41,11 +35,8 @@ public class Category implements Serializable {
 
     private String sortOrder;
 
-//    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
-//    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
-
 
 }

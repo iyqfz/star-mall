@@ -1,7 +1,8 @@
 package com.iyqrj.starmall.mapper;
 
-import com.iyqrj.starmall.entity.Category;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.iyqrj.starmall.entity.Category;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -27,6 +28,6 @@ public interface CategoryMapper extends BaseMapper<Category> {
 
     int updateByPrimaryKey(Category record);
 
-    List<Category> selectCategoryChildrenByParentId(Integer parentId);
+    List<Category> selectCategoryChildrenByParentId(@Param("parentId") Integer parentId);
 
 }

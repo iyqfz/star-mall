@@ -1,7 +1,7 @@
 package com.iyqrj.starmall.mapper;
 
-import com.iyqrj.starmall.entity.Level;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.iyqrj.starmall.entity.Level;
 
 /**
  * <p>

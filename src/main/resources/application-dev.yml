@@ -13,6 +13,16 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+#mybatis:
+#  mapper-locations: classpath:mapper/*Mapper.xml
+#  type-aliases-package: com.iyqrj.starmall.entity
+
+#showSql
+logging:
+  level:
+    com:
+      example:
+        mapper : debug
 
 password.salt:
   geelysdafaqj23ou89ZXcj@#$@#$#@KJdjklj;D../dSF.,

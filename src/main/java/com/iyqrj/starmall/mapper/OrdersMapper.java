@@ -1,7 +1,7 @@
 package com.iyqrj.starmall.mapper;
 
-import com.iyqrj.starmall.entity.Orders;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.iyqrj.starmall.entity.Orders;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 public interface OrdersMapper extends BaseMapper<Orders> {
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Orders record);
+//    int insert(Orders record);
 
     int insertSelective(Orders record);
 

@@ -2,14 +2,13 @@ package com.iyqrj.starmall.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.iyqrj.starmall.common.ServerResponse;
 import com.iyqrj.starmall.entity.Category;
 import com.iyqrj.starmall.mapper.CategoryMapper;
 import com.iyqrj.starmall.service.ICategoryService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -67,10 +66,10 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     }
 
     public ServerResponse<List<Category>> getChildrenParallelCategory(Integer categoryId){
-//        List<Category> categoryList =categoryMapper.selectCategoryChildrenByParentId(categoryId);
-        QueryWrapper<Category> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("parent_id", categoryId);
-        List<Category> categoryList =categoryMapper.selectList(queryWrapper);
+        QueryWrapper<Category> wrapper = new QueryWrapper<>();
+        wrapper.eq("parent_id", categoryId);
+        List<Category> categoryList = categoryMapper.selectList(wrapper);
+//        List<Category> categoryList = categoryMapper.selectCategoryChildrenByParentId(categoryId);
         if(CollectionUtils.isEmpty(categoryList)) {
             log.info("未找到当前分类的子分类");
         }
@@ -97,7 +96,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     // 递归算法，算出子节点
     private Set<Category> findChildCategory(Set<Category> categorySet, Integer categoryId) {
-        Category category = categoryMapper.selectByPrimaryKey(categoryId);
+        Category category = categoryMapper.selectById(categoryId);
         if(category != null) {
             categorySet.add(category);
         }

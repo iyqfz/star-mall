@@ -2,8 +2,6 @@ package com.iyqrj.starmall.service;
 
 import com.github.pagehelper.PageInfo;
 import com.iyqrj.starmall.common.ServerResponse;
-import com.iyqrj.starmall.entity.Orders;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.iyqrj.starmall.vo.OrderVo;
 
 import java.util.Map;
@@ -16,7 +14,7 @@ import java.util.Map;
  * @author lrj
  * @since 2020-10-19
  */
-public interface IOrderService extends IService<Orders> {
+public interface IOrderService {
 
     ServerResponse pay(Long orderNo, Integer userId, String path);
 

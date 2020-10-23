@@ -1,7 +1,7 @@
 package com.iyqrj.starmall.mapper;
 
-import com.iyqrj.starmall.entity.Cart;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.iyqrj.starmall.entity.Cart;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public interface CartMapper extends BaseMapper<Cart> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Cart record);
+//    int insert(Cart record);
 
     int insertSelective(Cart record);
 

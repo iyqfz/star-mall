@@ -15,7 +15,6 @@ import com.iyqrj.starmall.mapper.UserMapper;
 import com.iyqrj.starmall.service.ILevelService;
 import com.iyqrj.starmall.service.IPointService;
 import com.iyqrj.starmall.service.IUserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iyqrj.starmall.util.DateTimeUtil;
 import com.iyqrj.starmall.util.MD5Util;
 import com.iyqrj.starmall.vo.UserPointLevelVo;
@@ -37,7 +36,7 @@ import java.util.UUID;
  * @since 2020-10-19
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+public class UserServiceImpl implements IUserService {
 
     @Autowired
     private UserMapper userMapper;
@@ -223,14 +222,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private UserPointVo assembleUserPointVo(User user, Long totalPoint){
         UserPointVo userPointVo = new UserPointVo();
         userPointVo.setAnswer(user.getAnswer());
-//        userPointVo.setCreateTime(user.getCreateTime());todo
+        userPointVo.setCreateTime(user.getCreateTime());
         userPointVo.setEmail(user.getEmail());
         userPointVo.setId(user.getId());
         userPointVo.setPassword(user.getPassword());
         userPointVo.setPhone(user.getPhone());
         userPointVo.setQuestion(user.getQuestion());
         userPointVo.setRole(user.getRole());
-//        userPointVo.setUpdateTime(user.getUpdateTime());todo
+        userPointVo.setUpdateTime(user.getUpdateTime());
         userPointVo.setUsername(user.getUsername());
         userPointVo.setTotalPoint(totalPoint);
 
@@ -340,7 +339,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             userVo.setUsername(user.getUsername());
             userVo.setRoleName(user.getRole() == Const.Role.ROLE_ADMIN ? "管理员" : "普通用户");
             userVo.setPhone(user.getPhone());
-//            userVo.setCreateTime(DateTimeUtil.dateToStr(user.getCreateTime()));todo
+            userVo.setCreateTime(DateTimeUtil.dateToStr(user.getCreateTime()));
 
             userVoList.add(userVo);
         }

@@ -1,7 +1,5 @@
 package com.iyqrj.starmall.service;
 
-import com.iyqrj.starmall.entity.PayInfo;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
@@ -11,6 +9,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lrj
  * @since 2020-10-19
  */
-public interface IPayInfoService extends IService<PayInfo> {
+public interface IPayInfoService{
 
 }

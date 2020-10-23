@@ -2,10 +2,8 @@ package com.iyqrj.starmall.service.impl;
 
 import com.iyqrj.starmall.common.Const;
 import com.iyqrj.starmall.common.ServerResponse;
-import com.iyqrj.starmall.entity.Level;
 import com.iyqrj.starmall.mapper.LevelMapper;
 import com.iyqrj.starmall.service.ILevelService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +16,7 @@ import org.springframework.stereotype.Service;
  * @since 2020-10-19
  */
 @Service
-public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements ILevelService {
+public class LevelServiceImpl implements ILevelService {
 
     @Autowired
     private LevelMapper levelMapper;

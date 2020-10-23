@@ -1,7 +1,6 @@
 package com.iyqrj.starmall.mapper;
 
 import com.iyqrj.starmall.entity.Product;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
  * @author lrj
  * @since 2020-10-19
  */
-public interface ProductMapper extends BaseMapper<Product> {
+public interface ProductMapper {
     int deleteByPrimaryKey(Integer id);
 
     int insert(Product record);

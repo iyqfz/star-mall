@@ -3,7 +3,6 @@ package com.iyqrj.starmall.service;
 import com.github.pagehelper.PageInfo;
 import com.iyqrj.starmall.common.ServerResponse;
 import com.iyqrj.starmall.entity.User;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.iyqrj.starmall.vo.UserPointVo;
 
 /**
@@ -14,7 +13,7 @@ import com.iyqrj.starmall.vo.UserPointVo;
  * @author lrj
  * @since 2020-10-19
  */
-public interface IUserService extends IService<User> {
+public interface IUserService {
 
     ServerResponse<User> login(String username, String password);
 

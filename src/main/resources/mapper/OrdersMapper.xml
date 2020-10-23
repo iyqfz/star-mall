@@ -34,7 +34,7 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="com.iyqrj.starmall.entity.Orders">
-    insert into order (id, order_no, user_id,
+    insert into orders (id, order_no, user_id,
       shipping_id, payment, payment_type,
       postage, status, payment_time,
       send_time, end_time, close_time,

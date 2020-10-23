@@ -1,23 +1,26 @@
 package com.iyqrj.starmall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.iyqrj.starmall.common.Const;
 import com.iyqrj.starmall.common.ServerResponse;
 import com.iyqrj.starmall.entity.CustomerService;
+import com.iyqrj.starmall.entity.Orders;
 import com.iyqrj.starmall.entity.User;
 import com.iyqrj.starmall.mapper.CustomerServiceMapper;
 import com.iyqrj.starmall.mapper.OrdersMapper;
 import com.iyqrj.starmall.mapper.UserMapper;
 import com.iyqrj.starmall.service.ICustomerServiceService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iyqrj.starmall.util.DateTimeUtil;
 import com.iyqrj.starmall.vo.CustomerServiceUserVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,7 +32,7 @@ import java.util.List;
  * @since 2020-10-19
  */
 @Service
-public class CustomerServiceServiceImpl extends ServiceImpl<CustomerServiceMapper, CustomerService> implements ICustomerServiceService {
+public class CustomerServiceServiceImpl implements ICustomerServiceService {
 
     @Autowired
     private CustomerServiceMapper customerServiceMapper;
@@ -47,22 +50,44 @@ public class CustomerServiceServiceImpl extends ServiceImpl<CustomerServiceMappe
         customerService.setMainContent(mainContent);
         customerService.setStatus("已提交");
         customerServiceMapper.insert(customerService);
-        orderMapper.updateStatusByOrderNo(userId, orderNo, Const.OrderStatusEnum.ORDER_SERVICE.getCode());
+
+        UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("user_id", userId);
+        updateWrapper.eq("order_no", orderNo);
+        Orders orders = new Orders();
+        orders.setStatus(Const.OrderStatusEnum.ORDER_SERVICE.getCode());
+        orderMapper.update(orders, updateWrapper);
+//        orderMapper.updateStatusByOrderNo(userId, orderNo, Const.OrderStatusEnum.ORDER_SERVICE.getCode());
         return ServerResponse.createBySuccessMessage("提交成功");
     }
 
     @Override
     public ServerResponse<PageInfo> list(Integer userId, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum,pageSize);
-        List<CustomerService> customerServicesList = customerServiceMapper.selectByUserId(userId);
+
+        QueryWrapper<CustomerService> customerServiceQueryWrapper = new QueryWrapper<>();
+        customerServiceQueryWrapper.eq("user_id", userId);
+        List<CustomerService> customerServicesList = customerServiceMapper.selectList(customerServiceQueryWrapper);
+//        List<CustomerService> customerServicesList = customerServiceMapper.selectByUserId(userId);
         PageInfo pageResult = new PageInfo(customerServicesList);
         return ServerResponse.createBySuccess(pageResult);
     }
 
     @Override
     public ServerResponse<String> deleteById(Integer userId, Integer id, Long orderNo) {
-        customerServiceMapper.deleteByPrimaryKeyAndUserId(userId, id);
-        orderMapper.updateStatus(userId, orderNo, Const.OrderStatusEnum.ORDER_SUCCESS.getCode());
+        UpdateWrapper updateWrapper = new UpdateWrapper();
+        updateWrapper.eq("user_id", userId);
+        updateWrapper.eq("id", id);
+        customerServiceMapper.delete(updateWrapper);
+//                customerServiceMapper.deleteByPrimaryKeyAndUserId(userId, id);
+
+        UpdateWrapper<Orders> updateWrapper1 = new UpdateWrapper<>();
+        updateWrapper1.eq("user_id", userId);
+        updateWrapper1.eq("order_no", orderNo);
+        Orders orders = new Orders();
+        orders.setStatus(Const.OrderStatusEnum.ORDER_SUCCESS.getCode());
+        orderMapper.update(orders, updateWrapper1);
+//        orderMapper.updateStatus(userId, orderNo, Const.OrderStatusEnum.ORDER_SUCCESS.getCode());
         return ServerResponse.createBySuccessMessage("删除成功");
     }
 
@@ -76,7 +101,7 @@ public class CustomerServiceServiceImpl extends ServiceImpl<CustomerServiceMappe
     @Override
     public ServerResponse<PageInfo> listAll(int pageNum, int pageSize) {
         PageHelper.startPage(pageNum,pageSize);
-        List<CustomerService> customerServicesList = customerServiceMapper.selectAll();
+        List<CustomerService> customerServicesList = customerServiceMapper.selectList(null);
         List<CustomerServiceUserVo> csUserVo = this.assembleCSUserVo(customerServicesList);
         PageInfo pageResult = new PageInfo(csUserVo);
         return ServerResponse.createBySuccess(pageResult);
@@ -100,14 +125,21 @@ public class CustomerServiceServiceImpl extends ServiceImpl<CustomerServiceMappe
 
     @Override
     public ServerResponse<CustomerService> get(Integer csId) {
-        CustomerService customerService = customerServiceMapper.selectByPrimaryKey(csId);
+        CustomerService customerService = customerServiceMapper.selectById(csId);
         return ServerResponse.createBySuccess(customerService);
     }
 
     @Override
     public ServerResponse<CustomerService> replyService(CustomerService customerService) {
         if(StringUtils.equals(customerService.getStatus(),"结束")){
-            orderMapper.updateStatusByOrderNo(customerService.getUserId(),customerService.getOrderNo(),Const.OrderStatusEnum.ORDER_SUCCESS.getCode());
+            UpdateWrapper updateWrapper = new UpdateWrapper();
+            updateWrapper.eq("user_id", customerService.getUserId());
+            updateWrapper.eq("order_no", customerService.getOrderNo());
+            Orders orders = new Orders();
+            orders.setStatus(Const.OrderStatusEnum.ORDER_SUCCESS.getCode());
+            orders.setUpdateTime(new Date());
+            orderMapper.update(orders, updateWrapper);
+            //            orderMapper.updateStatusByOrderNo(customerService.getUserId(),customerService.getOrderNo(),Const.OrderStatusEnum.ORDER_SUCCESS.getCode());
         }
         customerServiceMapper.updateByPrimaryKeySelective(customerService);
         return ServerResponse.createBySuccessMessage("处理成功");
@@ -124,7 +156,7 @@ public class CustomerServiceServiceImpl extends ServiceImpl<CustomerServiceMappe
             csUserVo.setMainContent(cs.getMainContent());
             csUserVo.setOrderNo(cs.getOrderNo().toString());
             csUserVo.setReply(cs.getReply());
-//            csUserVo.setCreateTime(DateTimeUtil.dateToStr(cs.getCreateTime()));todo
+            csUserVo.setCreateTime(DateTimeUtil.dateToStr(cs.getCreateTime()));
 //            csUserVo.setCreateTime(DateTimeUtil.dateToStr(Date.from(cs.getCreateTime().atZone(ZoneId.systemDefault()).toInstant())));
             csUserVo.setStatus(cs.getStatus());
             csUserVoList.add(csUserVo);

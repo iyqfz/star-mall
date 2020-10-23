@@ -12,7 +12,6 @@ import com.iyqrj.starmall.mapper.CategoryMapper;
 import com.iyqrj.starmall.mapper.ProductMapper;
 import com.iyqrj.starmall.service.ICategoryService;
 import com.iyqrj.starmall.service.IProductService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iyqrj.starmall.util.DateTimeUtil;
 import com.iyqrj.starmall.util.PropertiesUtil;
 import com.iyqrj.starmall.vo.ProductDetailVo;
@@ -33,7 +32,7 @@ import java.util.List;
  * @since 2020-10-19
  */
 @Service
-public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> implements IProductService {
+public class ProductServiceImpl implements IProductService {
 
     @Autowired
     private ProductMapper productMapper;
@@ -110,10 +109,10 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         productDetailVo.setStock(product.getStock());
 
         //imageHost
-        productDetailVo.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix","http://img.chirou.shop/"));
+        productDetailVo.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix","http://img.iyqrj.com/"));
 
         //parentCategoryId
-        Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
+        Category category = categoryMapper.selectById(product.getCategoryId());
         if(category == null) {
             productDetailVo.setParentCategoryId(0);
         } else {
@@ -121,9 +120,9 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         }
 
         //createTime
-//        productDetailVo.setCreateTime(DateTimeUtil.dateToStr(product.getCreateTime()));todo
+        productDetailVo.setCreateTime(DateTimeUtil.dateToStr(product.getCreateTime()));
         //updateTime
-//        productDetailVo.setUpdateTime(DateTimeUtil.dateToStr(product.getUpdateTime()));todo
+        productDetailVo.setUpdateTime(DateTimeUtil.dateToStr(product.getUpdateTime()));
         return productDetailVo;
     }
 
@@ -192,7 +191,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         }
         List<Integer> categoryIdList = new ArrayList<Integer>();
         if(categoryId != null) {
-            Category category = categoryMapper.selectByPrimaryKey(categoryId);
+            Category category = categoryMapper.selectById(categoryId);
             if(category == null && StringUtils.isBlank(keyword)) {
                 //没有该分类，并且没有关键字，这个时候返回一个空的结果集，不报错
                 PageHelper.startPage(pageNum,pageSize);

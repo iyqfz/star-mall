@@ -1,7 +1,6 @@
 package com.iyqrj.starmall.mapper;
 
 import com.iyqrj.starmall.entity.PayInfo;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * <p>
@@ -11,7 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author lrj
  * @since 2020-10-19
  */
-public interface PayInfoMapper extends BaseMapper<PayInfo> {
+public interface PayInfoMapper {
     int deleteByPrimaryKey(Integer id);
 
     int insert(PayInfo record);

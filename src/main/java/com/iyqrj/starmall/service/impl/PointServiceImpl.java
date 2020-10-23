@@ -1,10 +1,8 @@
 package com.iyqrj.starmall.service.impl;
 
 import com.iyqrj.starmall.common.ServerResponse;
-import com.iyqrj.starmall.entity.Point;
 import com.iyqrj.starmall.mapper.PointMapper;
 import com.iyqrj.starmall.service.IPointService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @since 2020-10-19
  */
 @Service
-public class PointServiceImpl extends ServiceImpl<PointMapper, Point> implements IPointService {
+public class PointServiceImpl implements IPointService {
 
     @Autowired
     private PointMapper pointMapper;

@@ -1,8 +1,6 @@
 package com.iyqrj.starmall.service;
 
 import com.iyqrj.starmall.common.ServerResponse;
-import com.iyqrj.starmall.entity.Level;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
@@ -12,7 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lrj
  * @since 2020-10-19
  */
-public interface ILevelService extends IService<Level> {
+public interface ILevelService{
 
     ServerResponse<String> getUserLevel(Integer userId);
 

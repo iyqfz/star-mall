@@ -1,9 +1,6 @@
 package com.iyqrj.starmall.service.impl;
 
-import com.iyqrj.starmall.entity.PayInfo;
-import com.iyqrj.starmall.mapper.PayInfoMapper;
 import com.iyqrj.starmall.service.IPayInfoService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +12,6 @@ import org.springframework.stereotype.Service;
  * @since 2020-10-19
  */
 @Service
-public class PayInfoServiceImpl extends ServiceImpl<PayInfoMapper, PayInfo> implements IPayInfoService {
+public class PayInfoServiceImpl implements IPayInfoService {
 
 }

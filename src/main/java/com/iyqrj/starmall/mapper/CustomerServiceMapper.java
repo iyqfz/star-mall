@@ -1,7 +1,7 @@
 package com.iyqrj.starmall.mapper;
 
-import com.iyqrj.starmall.entity.CustomerService;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.iyqrj.starmall.entity.CustomerService;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public interface CustomerServiceMapper extends BaseMapper<CustomerService> {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(CustomerService record);
+//    int insert(CustomerService record);
 
     int insertSelective(CustomerService record);
 

@@ -1,6 +1,6 @@
 package com.iyqrj.starmall.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.iyqrj.starmall.common.Const;
@@ -11,11 +11,11 @@ import com.iyqrj.starmall.entity.Product;
 import com.iyqrj.starmall.mapper.CartMapper;
 import com.iyqrj.starmall.mapper.ProductMapper;
 import com.iyqrj.starmall.service.ICartService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iyqrj.starmall.util.BigDecimalUtil;
 import com.iyqrj.starmall.util.PropertiesUtil;
 import com.iyqrj.starmall.vo.CartProductVo;
 import com.iyqrj.starmall.vo.CartVo;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ import java.util.List;
  * @since 2020-10-19
  */
 @Service
-public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements ICartService {
+public class CartServiceImpl implements ICartService {
 
     @Autowired
     private CartMapper cartMapper;
@@ -43,7 +43,11 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
             return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(),ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
 
-        Cart cart = cartMapper.selectCartByUserIdProductId(userId,productId);
+        QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("product_id", productId);
+//        Cart cart = cartMapper.selectCartByUserIdProductId(userId,productId);
+        Cart cart = cartMapper.selectOne(queryWrapper);
         if(cart == null) {
             //这个产品不在这个购物车里,需要新增一个这个产品的记录
             Cart cartItem = new Cart();
@@ -66,7 +70,12 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         if(productId == null || count == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(),ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
-        Cart cart = cartMapper.selectCartByUserIdProductId(userId, productId);
+
+        QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("product_id", productId);
+        Cart cart = cartMapper.selectOne(queryWrapper);
+//        Cart cart = cartMapper.selectCartByUserIdProductId(userId, productId);
         if(cart != null){
             cart.setQuantity(count);
         }
@@ -104,7 +113,11 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     private CartVo getCartVoLimit(Integer userId) {
         CartVo cartVo = new CartVo();
-        List<Cart> cartList = cartMapper.selectCartByUserId(userId);
+
+        QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        List<Cart> cartList = cartMapper.selectList(queryWrapper);
+//        List<Cart> cartList = cartMapper.selectCartByUserId(userId);
         List<CartProductVo> cartProductVoList = Lists.newArrayList();
 
         BigDecimal cartTotalPrice = new BigDecimal("0");

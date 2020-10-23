@@ -10,15 +10,16 @@ import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
 import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
 import com.alipay.demo.trade.utils.ZxingUtils;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.iyqrj.starmall.common.Const;
 import com.iyqrj.starmall.common.ServerResponse;
-import com.iyqrj.starmall.mapper.*;
 import com.iyqrj.starmall.entity.*;
+import com.iyqrj.starmall.mapper.*;
 import com.iyqrj.starmall.service.IOrderService;
 import com.iyqrj.starmall.util.BigDecimalUtil;
 import com.iyqrj.starmall.util.DateTimeUtil;
@@ -41,7 +42,7 @@ import java.util.*;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author lrj
@@ -49,7 +50,7 @@ import java.util.*;
  */
 @Service
 @Slf4j
-public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements IOrderService {
+public class OrderServiceImpl implements IOrderService {
 
     @Autowired
     private OrdersMapper orderMapper;
@@ -68,10 +69,14 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
     @Autowired
     private LevelMapper levelMapper;
 
-    public ServerResponse pay(Long orderNo, Integer userId, String path){
+    public ServerResponse pay(Long orderNo, Integer userId, String path) {
         Map<String, String> resultMap = Maps.newHashMap();
-        Orders order = orderMapper.selectByUserIdAndOrderNo(userId,orderNo);
-        if(order == null) {
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("order_no", orderNo);
+        Orders order = orderMapper.selectOne(queryWrapper);
+//        Orders order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
+        if (order == null) {
             return ServerResponse.createByErrorMessage("用户没有该订单");
         }
         resultMap.put("orderNo", String.valueOf(order.getOrderNo()));
@@ -81,7 +86,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         String outTradeNo = order.getOrderNo().toString();
 
         // (必填) 订单标题，粗略描述用户的支付目的。如“xxx品牌xxx门店当面付扫码消费”
-        String subject = new StringBuilder().append("btuc扫码支付，订单号：").append(outTradeNo).toString();
+        String subject = new StringBuilder().append("麦乐商城扫码支付，订单号：").append(outTradeNo).toString();
 
         // (必填) 订单总金额，单位为元，不能超过1亿元
         // 如果同时传入了【打折金额】,【不可打折金额】,【订单总金额】三者,则必须满足如下条件:【订单总金额】=【打折金额】+【不可打折金额】
@@ -114,10 +119,14 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         // 商品明细列表，需填写购买商品详细信息，
         List<GoodsDetail> goodsDetailList = new ArrayList<GoodsDetail>();
 
-        List<OrderItem> orderItemList = orderItemMapper.getByOrderNoUserId(orderNo,userId);
-        for(OrderItem orderItem : orderItemList){
+        QueryWrapper<OrderItem> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("order_no", orderNo);
+        queryWrapper1.eq("user_id", userId);
+        List<OrderItem> orderItemList = orderItemMapper.selectList(queryWrapper1);
+//        List<OrderItem> orderItemList = orderItemMapper.getByOrderNoUserId(orderNo, userId);
+        for (OrderItem orderItem : orderItemList) {
             GoodsDetail goods1 = GoodsDetail.newInstance(orderItem.getProductId().toString(), orderItem.getProductName(),
-                    BigDecimalUtil.mul(orderItem.getCurrentUnitPrice().doubleValue(),new Double(100).doubleValue()).longValue(),
+                    BigDecimalUtil.mul(orderItem.getCurrentUnitPrice().doubleValue(), new Double(100).doubleValue()).longValue(),
                     orderItem.getQuantity());
             goodsDetailList.add(goods1);
         }
@@ -150,7 +159,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
                 dumpResponse(response);
 
                 File folder = new File(path);
-                if(!folder.exists()){
+                if (!folder.exists()) {
                     folder.setWritable(true);
                     folder.mkdirs();
                 }
@@ -158,18 +167,18 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
                 // 需要修改为运行机器上的路径
                 String qrPath = String.format(path + "/qr-%s.png",
                         response.getOutTradeNo());
-                String qrFileName = String.format("qr-%s.png",response.getOutTradeNo());
-                ZxingUtils.getQRCodeImge(response.getQrCode(),256,qrPath);
+                String qrFileName = String.format("qr-%s.png", response.getOutTradeNo());
+                ZxingUtils.getQRCodeImge(response.getQrCode(), 256, qrPath);
 
                 File targetFile = new File(path, qrFileName);
                 try {
                     FTPUtil.uploadFile(Lists.newArrayList(targetFile));
                 } catch (IOException e) {
-                    log.error("上传二维码异常",e);
+                    log.error("上传二维码异常", e);
                 }
                 log.info("filePath:" + qrPath);
                 String qrUrl = PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName();
-                resultMap.put("qrUrl",qrUrl);
+                resultMap.put("qrUrl", qrUrl);
                 return ServerResponse.createBySuccess(resultMap);
             //                ZxingUtils.getQRCodeImge(response.getQrCode(), 256, filePath);
 
@@ -197,21 +206,29 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         }
     }
 
-    public ServerResponse aliCallback(Map<String,String> params){
+    public ServerResponse aliCallback(Map<String, String> params) {
         Long orderNo = Long.parseLong(params.get("out_trade_no"));
         String tradeNo = params.get("trade_no");
         String tradeStatus = params.get("trade_status");
-        Orders order = orderMapper.selectByOrderNo(orderNo);
-        if(order == null) {
+
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_no", orderNo);
+        Orders order = orderMapper.selectOne(queryWrapper);
+//        Orders order = orderMapper.selectByOrderNo(orderNo);
+        if (order == null) {
             return ServerResponse.createByErrorMessage("非本商城的订单，回调忽略");
         }
-        if(order.getStatus() >= Const.OrderStatusEnum.PAID.getCode()) {
+        if (order.getStatus() >= Const.OrderStatusEnum.PAID.getCode()) {
             return ServerResponse.createBySuccess("支付宝重复调用");
         }
-        if(Const.AlipayCallback.TRADE_STATUS_TRADE_SUCCESS.equals(tradeStatus)) {
-//            order.setPaymentTime(DateTimeUtil.strToDate(params.get("gmt_payment")));todo
+        if (Const.AlipayCallback.TRADE_STATUS_TRADE_SUCCESS.equals(tradeStatus)) {
+            order.setPaymentTime(DateTimeUtil.strToDate(params.get("gmt_payment")));
             order.setStatus(Const.OrderStatusEnum.PAID.getCode());
-            orderMapper.updateByPrimaryKeySelective(order);
+
+            UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("id", order.getId());
+            orderMapper.update(order, updateWrapper);
+//            orderMapper.updateByPrimaryKeySelective(order);
         }
 
         PayInfo payInfo = new PayInfo();
@@ -227,11 +244,15 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
     }
 
     public ServerResponse queryOrderpayStatus(Integer userId, Long orderNo) {
-        Orders order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
-        if(order == null) {
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("order_no", orderNo);
+        Orders order = orderMapper.selectOne(queryWrapper);
+//        Orders order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
+        if (order == null) {
             return ServerResponse.createBySuccessMessage("用户没有该订单");
         }
-        if(order.getStatus() >= Const.OrderStatusEnum.PAID.getCode()) {
+        if (order.getStatus() >= Const.OrderStatusEnum.PAID.getCode()) {
             return ServerResponse.createBySuccess();
         }
         return ServerResponse.createByError();
@@ -240,25 +261,29 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
 
     public ServerResponse createOrder(Integer userId, Integer shippingId) {
         //从购物车中获取数据
-        List<Cart> cartList = cartMapper.selectCheckedCartByUserId(userId);
+        QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("checked", 1);
+        List<Cart> cartList = cartMapper.selectList(queryWrapper);
+//        List<Cart> cartList = cartMapper.selectCheckedCartByUserId(userId);
 
         //计算这个订单的总价
         ServerResponse serverResponse = this.getCartOrderItem(userId, cartList);
-        if(!serverResponse.isSuccess()) {
+        if (!serverResponse.isSuccess()) {
             return serverResponse;
         }
         List<OrderItem> orderItemList = (List<OrderItem>) serverResponse.getData();
         BigDecimal payment = this.getOrderTotalPrice(orderItemList);
 
         //生成订单
-        Orders order = this.assembleOrder(userId,shippingId,payment);
-        if(order == null) {
+        Orders order = this.assembleOrder(userId, shippingId, payment);
+        if (order == null) {
             return ServerResponse.createByErrorMessage("生成订单错误");
         }
-        if(CollectionUtils.isEmpty(orderItemList)) {
+        if (CollectionUtils.isEmpty(orderItemList)) {
             return ServerResponse.createByErrorMessage("购物车为空");
         }
-        for(OrderItem orderItem : orderItemList) {
+        for (OrderItem orderItem : orderItemList) {
             orderItem.setOrderNo(order.getOrderNo());
         }
         //mybatis 批量插入
@@ -272,7 +297,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
 
         //返回给前端数据
 
-        OrderVo orderVo = assembleOrderVo(order,orderItemList);
+        OrderVo orderVo = assembleOrderVo(order, orderItemList);
         return ServerResponse.createBySuccess(orderVo);
     }
 
@@ -288,17 +313,17 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         orderVo.setStatusDesc(Const.OrderStatusEnum.codeOf(order.getStatus()).getValue());
 
         orderVo.setShippingId(order.getShippingId());
-        Shipping shipping = shippingMapper.selectByPrimaryKey(order.getShippingId());
+        Shipping shipping = shippingMapper.selectById(order.getShippingId());
         if (shipping != null) {
             orderVo.setReceiverName(shipping.getReceiverName());
             orderVo.setShippingVo(assembleShippingVo(shipping));
         }
 
-//        orderVo.setPaymentTime(DateTimeUtil.dateToStr(order.getPaymentTime()));todo
-//        orderVo.setSendTime(DateTimeUtil.dateToStr(order.getSendTime()));todo
-//        orderVo.setEndTime(DateTimeUtil.dateToStr(order.getEndTime()));todo
-//        orderVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));todo
-//        orderVo.setCloseTime(DateTimeUtil.dateToStr(order.getCloseTime()));todo
+        orderVo.setPaymentTime(DateTimeUtil.dateToStr(order.getPaymentTime()));
+        orderVo.setSendTime(DateTimeUtil.dateToStr(order.getSendTime()));
+        orderVo.setEndTime(DateTimeUtil.dateToStr(order.getEndTime()));
+        orderVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));
+        orderVo.setCloseTime(DateTimeUtil.dateToStr(order.getCloseTime()));
 
         orderVo.setImageHost(PropertiesUtil.getProperty("ftp.server.http.prefix"));
 
@@ -312,7 +337,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         return orderVo;
     }
 
-    private OrderItemVo assembleOrderItemVo(OrderItem orderItem){
+    private OrderItemVo assembleOrderItemVo(OrderItem orderItem) {
         OrderItemVo orderItemVo = new OrderItemVo();
         orderItemVo.setOrderNo(orderItem.getOrderNo());
         orderItemVo.setProductId(orderItem.getProductId());
@@ -322,12 +347,12 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         orderItemVo.setQuantity(orderItem.getQuantity());
         orderItemVo.setTotalPrice(orderItem.getTotalPrice());
 
-//        orderItemVo.setCreateTime(DateTimeUtil.dateToStr(orderItem.getCreateTime()));todo
+        orderItemVo.setCreateTime(DateTimeUtil.dateToStr(orderItem.getCreateTime()));
         return orderItemVo;
     }
 
     //  填充收货信息
-    private ShippingVo assembleShippingVo(Shipping shipping){
+    private ShippingVo assembleShippingVo(Shipping shipping) {
         ShippingVo shippingVo = new ShippingVo();
         shippingVo.setReceiverName(shipping.getReceiverName());
         shippingVo.setReceiverAddress(shipping.getReceiverAddress());
@@ -342,14 +367,14 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
 
     //    清空购物车
     private void clearCart(List<Cart> cartList) {
-        for(Cart cart : cartList) {
+        for (Cart cart : cartList) {
             cartMapper.deleteByPrimaryKey(cart.getId());
         }
     }
 
     //    减少库存
     private void reduceProductStock(List<OrderItem> orderItemList) {
-        for(OrderItem orderItem : orderItemList) {
+        for (OrderItem orderItem : orderItemList) {
             Product product = productMapper.selectByPrimaryKey(orderItem.getProductId());
             product.setStock(product.getStock() - orderItem.getQuantity());
             productMapper.updateByPrimaryKeySelective(product);
@@ -370,20 +395,20 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         //发货时间等等
         //付款赶时间等等
         int rowCount = orderMapper.insert(order);
-        if(rowCount > 0){
+        if (rowCount > 0) {
             return order;
         }
         return null;
     }
 
-    private Long generateOrderNo(){
+    private Long generateOrderNo() {
         long currentTIme = System.currentTimeMillis();
         return currentTIme + new Random().nextInt(100);
     }
 
-    private BigDecimal getOrderTotalPrice(List<OrderItem> orderItemList){
+    private BigDecimal getOrderTotalPrice(List<OrderItem> orderItemList) {
         BigDecimal payment = new BigDecimal("0");
-        for(OrderItem orderItem : orderItemList) {
+        for (OrderItem orderItem : orderItemList) {
             payment = BigDecimalUtil.add(payment.doubleValue(), orderItem.getTotalPrice().doubleValue());
         }
         return payment;
@@ -391,19 +416,19 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
 
     private ServerResponse getCartOrderItem(Integer userId, List<Cart> cartList) {
         List<OrderItem> orderItemList = Lists.newArrayList();
-        if(CollectionUtils.isEmpty(cartList)){
+        if (CollectionUtils.isEmpty(cartList)) {
             return ServerResponse.createByErrorMessage("购物车为空");
         }
 
         //校验购物车的数据，包括产品的状态和数量
-        for(Cart cartItem : cartList) {
+        for (Cart cartItem : cartList) {
             OrderItem orderItem = new OrderItem();
             Product product = productMapper.selectByPrimaryKey(cartItem.getProductId());
-            if(Const.ProductStatusEnum.ON_SALE.getCode() != product.getStatus()) {
+            if (Const.ProductStatusEnum.ON_SALE.getCode() != product.getStatus()) {
                 return ServerResponse.createByErrorMessage("产品" + product.getName() + "不是在线售卖状态");
             }
             //校验库存
-            if(cartItem.getQuantity() > product.getStock()) {
+            if (cartItem.getQuantity() > product.getStock()) {
                 return ServerResponse.createByErrorMessage("产品:" + product.getName() + "->库存不足");
             }
 
@@ -420,19 +445,26 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
     }
 
     public ServerResponse<String> cancel(Integer userId, Long orderNo) {
-        Orders order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
-        if(order == null) {
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("order_no", orderNo);
+        Orders order = orderMapper.selectOne(queryWrapper);
+//        Orders order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
+        if (order == null) {
             return ServerResponse.createByErrorMessage("该用户此订单不存在");
         }
-        if(order.getStatus() != Const.OrderStatusEnum.NO_PAY.getCode()) {
+        if (order.getStatus() != Const.OrderStatusEnum.NO_PAY.getCode()) {
             return ServerResponse.createByErrorMessage("已付款，无法取消订单");
         }
         Orders updateOrder = new Orders();
         updateOrder.setId(order.getId());
         updateOrder.setStatus(Const.OrderStatusEnum.CANCELED.getCode());
 
-        int row = orderMapper.updateByPrimaryKeySelective(updateOrder);
-        if(row > 0) {
+        UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", updateOrder.getId());
+        int row = orderMapper.update(updateOrder, updateWrapper);
+//        int row = orderMapper.updateByPrimaryKeySelective(updateOrder);
+        if (row > 0) {
             return ServerResponse.createBySuccess();
         }
         return ServerResponse.createByError();
@@ -442,9 +474,13 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         OrderProductVo orderProductVo = new OrderProductVo();
         //从购物车中获取数据
 
-        List<Cart> cartList = cartMapper.selectCheckedCartByUserId(userId);
+        QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("checked", 1);
+        List<Cart> cartList = cartMapper.selectList(queryWrapper);
+//        List<Cart> cartList = cartMapper.selectCheckedCartByUserId(userId);
         ServerResponse serverResponse = this.getCartOrderItem(userId, cartList);
-        if(!serverResponse.isSuccess()) {
+        if (!serverResponse.isSuccess()) {
             return serverResponse;
         }
         List<OrderItem> orderItemList = (List<OrderItem>) serverResponse.getData();
@@ -452,7 +488,7 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         List<OrderItemVo> orderItemVoList = Lists.newArrayList();
 
         BigDecimal payment = new BigDecimal("0");
-        for(OrderItem orderItem : orderItemList) {
+        for (OrderItem orderItem : orderItemList) {
             payment = BigDecimalUtil.add(payment.doubleValue(), orderItem.getTotalPrice().doubleValue());
             orderItemVoList.add(assembleOrderItemVo(orderItem));
         }
@@ -463,36 +499,50 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
         return ServerResponse.createBySuccess(orderProductVo);
     }
 
-    public ServerResponse<OrderVo> getOrderDetail(Integer userId,Long orderNo){
-        Orders order = orderMapper.selectByUserIdAndOrderNo(userId,orderNo);
-        if(order != null){
-            List<OrderItem> orderItemList = orderItemMapper.getByOrderNoUserId(orderNo,userId);
-            OrderVo orderVo = assembleOrderVo(order,orderItemList);
+    public ServerResponse<OrderVo> getOrderDetail(Integer userId, Long orderNo) {
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("order_no", orderNo);
+        Orders order = orderMapper.selectOne(queryWrapper);
+//        Orders order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
+        if (order != null) {
+            QueryWrapper<OrderItem> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("user_id", userId);
+            queryWrapper1.eq("order_no", orderNo);
+            List<OrderItem> orderItemList = orderItemMapper.selectList(queryWrapper1);
+            OrderVo orderVo = assembleOrderVo(order, orderItemList);
             return ServerResponse.createBySuccess(orderVo);
         }
-        return  ServerResponse.createByErrorMessage("没有找到该订单");
+        return ServerResponse.createByErrorMessage("没有找到该订单");
     }
 
-    public ServerResponse<PageInfo> getOrderList(Integer userId, int pageNum, int pageSize){
-        PageHelper.startPage(pageNum,pageSize);
-        List<Orders> orderList = orderMapper.selectByUserId(userId);
-        List<OrderVo> orderVoList = assembleOrderVoList(orderList,userId);
+    public ServerResponse<PageInfo> getOrderList(Integer userId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        List<Orders> orderList = orderMapper.selectList(queryWrapper);
+        List<OrderVo> orderVoList = assembleOrderVoList(orderList, userId);
         PageInfo pageResult = new PageInfo(orderList);
         pageResult.setList(orderVoList);
         return ServerResponse.createBySuccess(pageResult);
     }
 
-    private List<OrderVo> assembleOrderVoList(List<Orders> orderList, Integer userId){
+    private List<OrderVo> assembleOrderVoList(List<Orders> orderList, Integer userId) {
         List<OrderVo> orderVoList = Lists.newArrayList();
-        for(Orders order : orderList){
-            List<OrderItem>  orderItemList = Lists.newArrayList();
-            if(userId == null){
+        for (Orders order : orderList) {
+            List<OrderItem> orderItemList = Lists.newArrayList();
+            if (userId == null) {
                 // 管理员查询的时候 不需要传userId
-                orderItemList = orderItemMapper.getByOrderNo(order.getOrderNo());
-            }else{
-                orderItemList = orderItemMapper.getByOrderNoUserId(order.getOrderNo(),userId);
+                QueryWrapper<OrderItem> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("order_no", order.getOrderNo());
+                orderItemList = orderItemMapper.selectList(queryWrapper);
+            } else {
+                QueryWrapper<OrderItem> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("order_no", order.getOrderNo());
+                queryWrapper.eq("user_id", userId);
+                orderItemList = orderItemMapper.selectList(queryWrapper);
             }
-            OrderVo orderVo = assembleOrderVo(order,orderItemList);
+            OrderVo orderVo = assembleOrderVo(order, orderItemList);
             orderVoList.add(orderVo);
         }
         return orderVoList;
@@ -500,31 +550,47 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
 
     //backend
 
-    public ServerResponse<PageInfo> manageList(int pageNum,int pageSize){
-        PageHelper.startPage(pageNum,pageSize);
-        List<Orders> orderList = orderMapper.selectAllOrder();
-        List<OrderVo> orderVoList = this.assembleOrderVoList(orderList,null);
+    public ServerResponse<PageInfo> manageList(int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderBy(false, false, "create_time");
+        List<Orders> orderList = orderMapper.selectList(queryWrapper);
+        ;
+        List<OrderVo> orderVoList = this.assembleOrderVoList(orderList, null);
         PageInfo pageResult = new PageInfo(orderList);
         pageResult.setList(orderVoList);
         return ServerResponse.createBySuccess(pageResult);
     }
 
-    public ServerResponse<OrderVo> manageDetail(Long orderNo){
-        Orders order = orderMapper.selectByOrderNo(orderNo);
-        if(order != null){
-            List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
-            OrderVo orderVo = assembleOrderVo(order,orderItemList);
+    public ServerResponse<OrderVo> manageDetail(Long orderNo) {
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_no", orderNo);
+        Orders order = orderMapper.selectOne(queryWrapper);
+//        Orders order = orderMapper.selectByOrderNo(orderNo);
+        if (order != null) {
+            QueryWrapper<OrderItem> queryWrapper2 = new QueryWrapper<>();
+            queryWrapper2.eq("order_no", orderNo);
+            List<OrderItem> orderItemList = orderItemMapper.selectList(queryWrapper2);
+//            List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
+            OrderVo orderVo = assembleOrderVo(order, orderItemList);
             return ServerResponse.createBySuccess(orderVo);
         }
         return ServerResponse.createByErrorMessage("订单不存在");
     }
 
-    public ServerResponse<PageInfo> manageSearch(Long orderNo,int pageNum,int pageSize){
-        PageHelper.startPage(pageNum,pageSize);
-        Orders order = orderMapper.selectByOrderNo(orderNo);
-        if(order != null){
-            List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
-            OrderVo orderVo = assembleOrderVo(order,orderItemList);
+    public ServerResponse<PageInfo> manageSearch(Long orderNo, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_no", orderNo);
+        Orders order = orderMapper.selectOne(queryWrapper);
+//        Orders order = orderMapper.selectByOrderNo(orderNo);
+        if (order != null) {
+            QueryWrapper<OrderItem> queryWrapper2 = new QueryWrapper<>();
+            queryWrapper2.eq("order_no", orderNo);
+            List<OrderItem> orderItemList = orderItemMapper.selectList(queryWrapper2);
+//            List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
+            OrderVo orderVo = assembleOrderVo(order, orderItemList);
 
             PageInfo pageResult = new PageInfo(Lists.newArrayList(order));
             pageResult.setList(Lists.newArrayList(orderVo));
@@ -534,13 +600,20 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
     }
 
 
-    public ServerResponse<String> manageSendGoods(Long orderNo){
-        Orders order= orderMapper.selectByOrderNo(orderNo);
-        if(order != null){
-            if(order.getStatus() == Const.OrderStatusEnum.PAID.getCode()){
+    public ServerResponse<String> manageSendGoods(Long orderNo) {
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_no", orderNo);
+        Orders order = orderMapper.selectOne(queryWrapper);
+//        Orders order = orderMapper.selectByOrderNo(orderNo);
+        if (order != null) {
+            if (order.getStatus() == Const.OrderStatusEnum.PAID.getCode()) {
                 order.setStatus(Const.OrderStatusEnum.SHIPPED.getCode());
-//                order.setSendTime(new Date());todo
-                orderMapper.updateByPrimaryKeySelective(order);
+                order.setSendTime(new Date());
+
+                UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<>();
+                updateWrapper.eq("id", order.getId());
+                orderMapper.update(order, updateWrapper);
+//                orderMapper.updateByPrimaryKeySelective(order);
                 return ServerResponse.createBySuccess("发货成功");
             }
         }
@@ -549,18 +622,46 @@ public class OrderServiceImpl extends ServiceImpl<OrdersMapper, Orders> implemen
 
     @Override
     public ServerResponse orderSuccess(Integer userId, Long orderNo) {
-        orderMapper.updateStatus(userId, orderNo, Const.OrderStatusEnum.ORDER_SUCCESS.getCode());
-        int payment = orderMapper.getPaymentByOrderNo(userId, orderNo);
-        Point point = pointMapper.getByUserId(userId);
-        Level level = levelMapper.getByUserId(userId);
+        UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("user_id", userId);
+        updateWrapper.eq("order_no", orderNo);
+        Orders orders = new Orders();
+        orders.setStatus(Const.OrderStatusEnum.ORDER_SUCCESS.getCode());
+        orderMapper.update(orders, updateWrapper);
+//        orderMapper.updateStatus(userId, orderNo, Const.OrderStatusEnum.ORDER_SUCCESS.getCode());
+
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("order_no", orderNo);
+        Orders orders1 = orderMapper.selectOne(queryWrapper);
+        int payment = orders1.getPayment().intValue();
+//        int payment = orderMapper.getPaymentByOrderNo(userId, orderNo);
+
+
+        QueryWrapper<Point> queryWrapper2 = new QueryWrapper();
+        queryWrapper2.eq("user_id", userId);
+        Point point = pointMapper.selectOne(queryWrapper2);
+//        Point point = pointMapper.getByUserId(userId);
+
+        QueryWrapper<Level> queryWrapper3 = new QueryWrapper();
+        queryWrapper3.eq("user_id", userId);
+        Level level = levelMapper.selectOne(queryWrapper3);
+//        Level level = levelMapper.getByUserId(userId);
 
         point.setTotalPoint(payment + point.getTotalPoint());
-//        point.setUpdateTime(new Date());todo
-        pointMapper.updateByPrimaryKeySelective(point);
+        point.setUpdateTime(new Date());
+        UpdateWrapper<Point> updateWrapper2 = new UpdateWrapper<>();
+        updateWrapper2.eq("id", point.getId());
+        pointMapper.update(point, updateWrapper2);
+//        pointMapper.updateByPrimaryKeySelective(point);
 
         level.setExperience(payment + level.getExperience());
-//        level.setUpdateTime(new Date());todo
-        levelMapper.updateByPrimaryKeySelective(level);
+        level.setUpdateTime(new Date());
+
+        UpdateWrapper<Level> updateWrapper3 = new UpdateWrapper<>();
+        updateWrapper3.eq("id", level.getId());
+        levelMapper.update(level, updateWrapper3);
+//        levelMapper.updateByPrimaryKeySelective(level);
 
         return ServerResponse.createBySuccess("确认收货成功");
     }

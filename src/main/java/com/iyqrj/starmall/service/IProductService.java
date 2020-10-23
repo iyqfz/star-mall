@@ -3,7 +3,6 @@ package com.iyqrj.starmall.service;
 import com.github.pagehelper.PageInfo;
 import com.iyqrj.starmall.common.ServerResponse;
 import com.iyqrj.starmall.entity.Product;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.iyqrj.starmall.vo.ProductDetailVo;
 
 /**
@@ -14,7 +13,7 @@ import com.iyqrj.starmall.vo.ProductDetailVo;
  * @author lrj
  * @since 2020-10-19
  */
-public interface IProductService extends IService<Product> {
+public interface IProductService{
 
     ServerResponse saveOrUpdateProduct(Product product);
 

@@ -1,8 +1,6 @@
 package com.iyqrj.starmall.service;
 
 import com.iyqrj.starmall.common.ServerResponse;
-import com.iyqrj.starmall.entity.Cart;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.iyqrj.starmall.vo.CartVo;
 
 /**
@@ -13,7 +11,7 @@ import com.iyqrj.starmall.vo.CartVo;
  * @author lrj
  * @since 2020-10-19
  */
-public interface ICartService extends IService<Cart> {
+public interface ICartService {
 
     ServerResponse<CartVo> add(Integer userId, Integer productId, Integer count);
 

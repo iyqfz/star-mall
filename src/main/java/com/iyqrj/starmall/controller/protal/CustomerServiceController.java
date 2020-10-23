@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
  * @since 2020-10-19
  */
 @RestController
-@RequestMapping("/customer-service")
+@RequestMapping("/customer_service")
 public class CustomerServiceController {
 
     @Autowired

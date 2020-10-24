@@ -4,7 +4,7 @@
     2. springboot 2.3.0
     3. spring
     4. spring mvc
-    5. mybatis
+    5. mybatis plus
     
     
 #1 在Linux中运行项目
